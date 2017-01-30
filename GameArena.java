@@ -137,6 +137,21 @@ public class GameArena extends JFrame
                 Ball b = entry.getKey();
                 javafx.scene.shape.Circle c = entry.getValue();
 
+                // We need to remove the shape.
+                if (b == null)
+                {
+                    root.getChildren().remove(c);
+                    continue;
+                }
+
+                // We need to add the shape.
+                if (c == null)
+                {
+                    c = new javafx.scene.shape.Circle(0,0,b.getSize());
+                    root.getChildren().add(c);
+                    balls.put(b, c);
+                }
+
                 c.setRadius(b.getSize());
                 c.setTranslateX(b.getXPosition());
                 c.setTranslateY(b.getYPosition());
@@ -147,6 +162,21 @@ public class GameArena extends JFrame
             {
                 Rectangle r = entry.getKey();
                 javafx.scene.shape.Rectangle rectangle = entry.getValue();
+
+                // We need to remove the shape.
+                if (r == null)
+                {
+                    root.getChildren().remove(rectangle);
+                    continue;
+                }
+
+                // We need to add the shape.
+                if (rectangle == null)
+                {
+                    rectangle = new javafx.scene.shape.Rectangle(0, 0, r.getWidth(), r.getHeight());
+                    root.getChildren().add(rectangle);
+                    rectangles.put(r, rectangle);
+                }
 
                 rectangle.setTranslateX(r.getXPosition() - r.getWidth()/2);
                 rectangle.setTranslateY(r.getYPosition() - r.getHeight()/2);
@@ -186,15 +216,8 @@ public class GameArena extends JFrame
                 System.exit(0);
 			}
 
-            // create a representation of this graphical object and add it to the list of things to draw...
-            javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(0,0,b.getSize());
-            circle.setTranslateX(b.getXPosition());
-            circle.setTranslateY(b.getYPosition());
-            circle.setFill(getColourFromString(b.getColour()));
-
-            root.getChildren().add(circle);
-
-            balls.put(b, circle);
+            // Add this ball to the draw list. Initially, with a nul JavaFX entry, which we'll fill in later to avoid cross-thread operations...
+            balls.put(b, null);
             objectCount++;
 		}
 	}
@@ -211,7 +234,9 @@ public class GameArena extends JFrame
 		{
             if(balls.containsKey(b))
             {
-			    balls.remove(b);
+                javafx.scene.shape.Circle c = balls.get(b);
+
+                balls.put(null, c);
                 objectCount--;
             }
 		}
@@ -239,15 +264,8 @@ public class GameArena extends JFrame
                 System.exit(0);
 			}
 
-            // create a representation of this graphical object and add it to the list of things to draw...
-            javafx.scene.shape.Rectangle rectangle = new javafx.scene.shape.Rectangle(0, 0, r.getWidth(), r.getHeight());
-            rectangle.setTranslateX(r.getXPosition() - r.getWidth()/2);
-            rectangle.setTranslateY(r.getYPosition() - r.getHeight()/2);
-            rectangle.setFill(getColourFromString(r.getColour()));
-
-            root.getChildren().add(rectangle);
-
-            rectangles.put(r, rectangle);
+            // Add this ball to the draw list. Initially, with a nul JavaFX entry, which we'll fill in later to avoid cross-thread operations...
+            rectangles.put(r, null);
             objectCount++;
 		}
 	}
@@ -264,7 +282,9 @@ public class GameArena extends JFrame
 		{
             if (rectangles.containsKey(r))
             {
-                rectangles.remove(r);
+                javafx.scene.shape.Rectangle rectangle = rectangles.get(r);
+
+                rectangles.put(null, rectangle);
                 objectCount--;
             }
 		}
