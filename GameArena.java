@@ -26,9 +26,12 @@ public class GameArena extends JFrame
 	private int arenaHeight;
 
 	private boolean exiting = false;
+    private final static int MAXIMUM_OBJECTS = 100000;
 
     // Collections of primitives. These now relate 1:1 to JavaFX Nodes, since moving from AWT.
     private Map<Ball, javafx.scene.shape.Circle> balls = new HashMap<>();
+    private Map<Rectangle, javafx.scene.shape.Rectangle> rectangles = new HashMap<>();
+    private int objectCount;
 
     // Basic button state
 	private boolean up = false;
@@ -51,6 +54,7 @@ public class GameArena extends JFrame
         this.setTitle("Let's Play!");
         this.arenaWidth = width;
         this.arenaHeight = height;
+        this.objectCount = 0;
 
         jfxPanel = new JFXPanel();
         jfxPanel.setPreferredSize(new java.awt.Dimension(width, height));
@@ -138,6 +142,16 @@ public class GameArena extends JFrame
                 c.setTranslateY(b.getYPosition());
                 c.setFill(getColourFromString(b.getColour()));
             }
+
+            for(Map.Entry<Rectangle, javafx.scene.shape.Rectangle> entry : rectangles.entrySet())
+            {
+                Rectangle r = entry.getKey();
+                javafx.scene.shape.Rectangle rectangle = entry.getValue();
+
+                rectangle.setTranslateX(r.getXPosition() - r.getWidth()/2);
+                rectangle.setTranslateY(r.getYPosition() - r.getHeight()/2);
+                rectangle.setFill(getColourFromString(r.getColour()));
+            }
         }
     }
 
@@ -158,10 +172,9 @@ public class GameArena extends JFrame
 	 */
 	public void addBall(Ball b)
 	{
-
 		synchronized (this)
 		{
-			if (balls.size() > 100000)
+			if (objectCount > MAXIMUM_OBJECTS)
 			{
 				System.out.println("\n\n");
 				System.out.println(" ********************************************************* ");
@@ -171,19 +184,18 @@ public class GameArena extends JFrame
 				System.out.println("-- Joe\n\n");
 
                 System.exit(0);
-
 			}
-			else
-			{
-                javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(0,0,b.getSize());
-                circle.setTranslateX(b.getXPosition());
-                circle.setTranslateY(b.getYPosition());
-                circle.setFill(getColourFromString(b.getColour()));
 
-                root.getChildren().add(circle);
+            // create a representation of this graphical object and add it to the list of things to draw...
+            javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(0,0,b.getSize());
+            circle.setTranslateX(b.getXPosition());
+            circle.setTranslateY(b.getYPosition());
+            circle.setFill(getColourFromString(b.getColour()));
 
-				balls.put(b, circle);
-			}
+            root.getChildren().add(circle);
+
+            balls.put(b, circle);
+            objectCount++;
 		}
 	}
 
@@ -197,7 +209,64 @@ public class GameArena extends JFrame
 	{
 		synchronized (this)
 		{
-			balls.remove(b);
+            if(balls.containsKey(b))
+            {
+			    balls.remove(b);
+                objectCount--;
+            }
+		}
+	}
+
+	/**
+	 * Adds a given rectangle to the GameArena. 
+	 * Once a Rectangle is added, it will automatically appear on the window. 
+	 *
+	 * @param r the rectangle to add to the GameArena.
+	 */
+	public void addRectangle(Rectangle r)
+	{
+		synchronized (this)
+		{
+			if (objectCount > MAXIMUM_OBJECTS)
+			{
+				System.out.println("\n\n");
+				System.out.println(" ********************************************************* ");
+				System.out.println(" ***** Only 100000 Objects Supported per Game Arena! ***** ");
+				System.out.println(" ********************************************************* ");
+				System.out.println("\n");
+				System.out.println("-- Joe\n\n");
+
+                System.exit(0);
+			}
+
+            // create a representation of this graphical object and add it to the list of things to draw...
+            javafx.scene.shape.Rectangle rectangle = new javafx.scene.shape.Rectangle(0, 0, r.getWidth(), r.getHeight());
+            rectangle.setTranslateX(r.getXPosition() - r.getWidth()/2);
+            rectangle.setTranslateY(r.getYPosition() - r.getHeight()/2);
+            rectangle.setFill(getColourFromString(r.getColour()));
+
+            root.getChildren().add(rectangle);
+
+            rectangles.put(r, rectangle);
+            objectCount++;
+		}
+	}
+
+	/**
+	 * Remove a Rectangle from the GameArena. 
+	 * Once a Rectangle is removed, it will no longer appear on the window. 
+	 *
+	 * @param r the rectangle to remove from the GameArena.
+	 */
+	public void removeRectangle(Rectangle r)
+	{
+		synchronized (this)
+		{
+            if (rectangles.containsKey(r))
+            {
+                rectangles.remove(r);
+                objectCount--;
+            }
 		}
 	}
 
