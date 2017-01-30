@@ -26,11 +26,12 @@ import javafx.scene.input.KeyCode;
  *
  * @author Joe Finney
  */
-public class GameArena extends JFrame 
+public class GameArena 
 {
 	// Size of window
 	private int arenaWidth;
 	private int arenaHeight;
+    private JFrame window;
 
 	private boolean exiting = false;
     private final static int MAXIMUM_OBJECTS = 100000;
@@ -60,18 +61,23 @@ public class GameArena extends JFrame
 	 */
 	public GameArena(int width, int height)
 	{   
-        this.setTitle("Let's Play!");
         this.arenaWidth = width;
         this.arenaHeight = height;
         this.objectCount = 0;
 
+        // Create a window
+        window = new JFrame();
+        window.setTitle("Let's Play!");
+
+        // Create a JavaFX canvas as a Swing panel.
         jfxPanel = new JFXPanel();
         jfxPanel.setPreferredSize(new java.awt.Dimension(width, height));
-        this.setContentPane(jfxPanel);
-        this.setResizable(false);
-        this.pack();
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        window.setContentPane(jfxPanel);
+        window.setResizable(false);
+        window.pack();
+        window.setVisible(true);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         root = new Group();
         scene = new Scene(root, arenaWidth, arenaHeight, Color.BLACK);
