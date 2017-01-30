@@ -17,6 +17,13 @@ import javafx.scene.input.KeyCode;
 
 /**
  * This class provides a simple window in which grahical objects can be drawn. 
+ *
+ * Instances of the Ball and Rectangle classes can be added to an instance of this class to
+ * draw and animate simple shapes on the screen. 
+ *
+ * @see Ball
+ * @see Rectangle
+ *
  * @author Joe Finney
  */
 public class GameArena extends JFrame 
@@ -45,9 +52,11 @@ public class GameArena extends JFrame
     private JFXPanel jfxPanel;
 
 	/**
-	 * Create a view of a GameArena.
-	 * The GameArena will be created with the default size of 300x300 pixels.
-	 *
+     * Constructor. Creates an instance of the GameArena class, and displays a window on the
+     * screen upon which shapes can be drawn.
+     *
+     * @param width The width of the window, in pixels.
+     * @param height The height of the window, in pixels.
 	 */
 	public GameArena(int width, int height)
 	{   
@@ -128,7 +137,7 @@ public class GameArena extends JFrame
 	/**
 	 * A method called by the operating system to draw onto the screen - <p><B>YOU DO NOT (AND SHOULD NOT) NEED TO CALL THIS METHOD.</b></p>
 	 */
-	public void frameUpdate ()
+	private void frameUpdate ()
     {
         if (!this.exiting)
         {
@@ -293,7 +302,6 @@ public class GameArena extends JFrame
 	/**
 	 * Pause for a 1/50 of a second. 
 	 * This method causes your program to delay for 1/50th of a second. You'll find this useful if you're trying to animate your application.
-	 *
 	 */
 	public void pause()
 	{
