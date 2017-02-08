@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 
+import java.awt.event.WindowEvent;
 
 /**
  * This class provides a simple window in which grahical objects can be drawn. 
@@ -138,6 +139,7 @@ public class GameArena
 	public void exit()
 	{
 		this.exiting = true;
+        window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
 	}
 
 	/**
