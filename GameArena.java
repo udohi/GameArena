@@ -38,6 +38,7 @@ public class GameArena
     private final static int MAXIMUM_OBJECTS = 100000;
 
     // Collections of primitives. These now relate 1:1 to JavaFX Nodes, since moving from AWT.
+    private List<Object> addList = new ArrayList<Object>();
     private Map<Ball, javafx.scene.shape.Circle> balls = new HashMap<>();
     private Map<Rectangle, javafx.scene.shape.Rectangle> rectangles = new HashMap<>();
     private int objectCount;
@@ -149,6 +150,28 @@ public class GameArena
     {
         if (!this.exiting)
         {
+            // Add any new objects to the scene.
+            for (Object o: addList)
+            {
+                if (o instanceof Ball)
+                {
+                    Ball b = (Ball) o;
+                    javafx.scene.shape.Circle c = new javafx.scene.shape.Circle(0,0,b.getSize());
+                    root.getChildren().add(c);
+                    balls.put(b, c);
+                }
+
+                if (o instanceof Rectangle)
+                {
+                    Rectangle r = (Rectangle) o;
+                    javafx.scene.shape.Rectangle rectangle = new javafx.scene.shape.Rectangle(0, 0, r.getWidth(), r.getHeight());
+                    root.getChildren().add(rectangle);
+                    rectangles.put(r, rectangle);
+                }
+            }
+
+            addList.clear();
+
             for(Map.Entry<Ball, javafx.scene.shape.Circle> entry : balls.entrySet())
             {
                 Ball b = entry.getKey();
@@ -159,14 +182,6 @@ public class GameArena
                 {
                     root.getChildren().remove(c);
                     continue;
-                }
-
-                // We need to add the shape.
-                if (c == null)
-                {
-                    c = new javafx.scene.shape.Circle(0,0,b.getSize());
-                    root.getChildren().add(c);
-                    balls.put(b, c);
                 }
 
                 c.setRadius(b.getSize());
@@ -185,14 +200,6 @@ public class GameArena
                 {
                     root.getChildren().remove(rectangle);
                     continue;
-                }
-
-                // We need to add the shape.
-                if (rectangle == null)
-                {
-                    rectangle = new javafx.scene.shape.Rectangle(0, 0, r.getWidth(), r.getHeight());
-                    root.getChildren().add(rectangle);
-                    rectangles.put(r, rectangle);
                 }
 
                 rectangle.setTranslateX(r.getXPosition() - r.getWidth()/2);
@@ -233,8 +240,8 @@ public class GameArena
                 System.exit(0);
 			}
 
-            // Add this ball to the draw list. Initially, with a nul JavaFX entry, which we'll fill in later to avoid cross-thread operations...
-            balls.put(b, null);
+            // Add this ball to the draw list. Initially, with a null JavaFX entry, which we'll fill in later to avoid cross-thread operations...
+            addList.add(b);
             objectCount++;
 		}
 	}
@@ -281,8 +288,8 @@ public class GameArena
                 System.exit(0);
 			}
 
-            // Add this ball to the draw list. Initially, with a nul JavaFX entry, which we'll fill in later to avoid cross-thread operations...
-            rectangles.put(r, null);
+            // Add this ball to the draw list. Initially, with a null JavaFX entry, which we'll fill in later to avoid cross-thread operations...
+            addList.add(r);
             objectCount++;
 		}
 	}
