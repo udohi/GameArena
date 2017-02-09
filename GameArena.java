@@ -152,50 +152,53 @@ public class GameArena
         if (!this.exiting)
         {
             // Remove any deleted objects from the scene.
-            for (Object o: removeList)
+            synchronized (this)
             {
-                if (o instanceof Ball)
+                for (Object o: removeList)
                 {
-                    Ball b = (Ball) o;
-                    javafx.scene.shape.Circle c = balls.get(b);
-                    root.getChildren().remove(c);
+                    if (o instanceof Ball)
+                    {
+                        Ball b = (Ball) o;
+                        javafx.scene.shape.Circle c = balls.get(b);
+                        root.getChildren().remove(c);
 
-                    balls.remove(b);
+                        balls.remove(b);
+                    }
+
+                    if (o instanceof Rectangle)
+                    {
+                        Rectangle r = (Rectangle) o;
+                        javafx.scene.shape.Rectangle rectangle = rectangles.get(r);
+                        root.getChildren().remove(rectangle);
+
+                        rectangles.remove(r);
+                    }
                 }
 
-                if (o instanceof Rectangle)
-                {
-                    Rectangle r = (Rectangle) o;
-                    javafx.scene.shape.Rectangle rectangle = rectangles.get(r);
-                    root.getChildren().remove(rectangle);
+                removeList.clear();
 
-                    rectangles.remove(r);
+                // Add any new objects to the scene.
+                for (Object o: addList)
+                {
+                    if (o instanceof Ball)
+                    {
+                        Ball b = (Ball) o;
+                        javafx.scene.shape.Circle c = new javafx.scene.shape.Circle(0,0,b.getSize());
+                        root.getChildren().add(c);
+                        balls.put(b, c);
+                    }
+
+                    if (o instanceof Rectangle)
+                    {
+                        Rectangle r = (Rectangle) o;
+                        javafx.scene.shape.Rectangle rectangle = new javafx.scene.shape.Rectangle(0, 0, r.getWidth(), r.getHeight());
+                        root.getChildren().add(rectangle);
+                        rectangles.put(r, rectangle);
+                    }
                 }
+
+                addList.clear();
             }
-
-            removeList.clear();
-
-            // Add any new objects to the scene.
-            for (Object o: addList)
-            {
-                if (o instanceof Ball)
-                {
-                    Ball b = (Ball) o;
-                    javafx.scene.shape.Circle c = new javafx.scene.shape.Circle(0,0,b.getSize());
-                    root.getChildren().add(c);
-                    balls.put(b, c);
-                }
-
-                if (o instanceof Rectangle)
-                {
-                    Rectangle r = (Rectangle) o;
-                    javafx.scene.shape.Rectangle rectangle = new javafx.scene.shape.Rectangle(0, 0, r.getWidth(), r.getHeight());
-                    root.getChildren().add(rectangle);
-                    rectangles.put(r, rectangle);
-                }
-            }
-
-            addList.clear();
 
             for(Map.Entry<Ball, javafx.scene.shape.Circle> entry : balls.entrySet())
             {
