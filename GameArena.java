@@ -255,6 +255,7 @@ public class GameArena
 			}
 
             // Add this ball to the draw list. Initially, with a null JavaFX entry, which we'll fill in later to avoid cross-thread operations...
+            removeList.remove(b);
             addList.add(b);
             objectCount++;
 		}
@@ -270,6 +271,7 @@ public class GameArena
 	{
 		synchronized (this)
 		{
+            addList.remove(b);
             removeList.add(b);
             objectCount--;
 		}
@@ -298,6 +300,7 @@ public class GameArena
 			}
 
             // Add this ball to the draw list. Initially, with a null JavaFX entry, which we'll fill in later to avoid cross-thread operations...
+            removeList.remove(r);
             addList.add(r);
             objectCount++;
 		}
@@ -313,6 +316,7 @@ public class GameArena
 	{
 		synchronized (this)
 		{
+            addList.remove(r);
             removeList.add(r);
             objectCount--;
 		}
