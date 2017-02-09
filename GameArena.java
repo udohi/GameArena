@@ -39,6 +39,7 @@ public class GameArena
 
     // Collections of primitives. These now relate 1:1 to JavaFX Nodes, since moving from AWT.
     private List<Object> addList = new ArrayList<Object>();
+    private List<Object> removeList = new ArrayList<Object>();
     private Map<Ball, javafx.scene.shape.Circle> balls = new HashMap<>();
     private Map<Rectangle, javafx.scene.shape.Rectangle> rectangles = new HashMap<>();
     private int objectCount;
@@ -150,6 +151,30 @@ public class GameArena
     {
         if (!this.exiting)
         {
+            // Remove any deleted objects from the scene.
+            for (Object o: removeList)
+            {
+                if (o instanceof Ball)
+                {
+                    Ball b = (Ball) o;
+                    javafx.scene.shape.Circle c = balls.get(b);
+                    root.getChildren().remove(c);
+
+                    balls.remove(b);
+                }
+
+                if (o instanceof Rectangle)
+                {
+                    Rectangle r = (Rectangle) o;
+                    javafx.scene.shape.Rectangle rectangle = rectangles.get(r);
+                    root.getChildren().remove(rectangle);
+
+                    rectangles.remove(r);
+                }
+            }
+
+            removeList.clear();
+
             // Add any new objects to the scene.
             for (Object o: addList)
             {
@@ -177,13 +202,6 @@ public class GameArena
                 Ball b = entry.getKey();
                 javafx.scene.shape.Circle c = entry.getValue();
 
-                // We need to remove the shape.
-                if (b == null)
-                {
-                    root.getChildren().remove(c);
-                    continue;
-                }
-
                 c.setRadius(b.getSize());
                 c.setTranslateX(b.getXPosition());
                 c.setTranslateY(b.getYPosition());
@@ -194,13 +212,6 @@ public class GameArena
             {
                 Rectangle r = entry.getKey();
                 javafx.scene.shape.Rectangle rectangle = entry.getValue();
-
-                // We need to remove the shape.
-                if (r == null)
-                {
-                    root.getChildren().remove(rectangle);
-                    continue;
-                }
 
                 rectangle.setTranslateX(r.getXPosition() - r.getWidth()/2);
                 rectangle.setTranslateY(r.getYPosition() - r.getHeight()/2);
@@ -256,13 +267,8 @@ public class GameArena
 	{
 		synchronized (this)
 		{
-            if(balls.containsKey(b))
-            {
-                javafx.scene.shape.Circle c = balls.get(b);
-
-                balls.put(null, c);
-                objectCount--;
-            }
+            removeList.add(b);
+            objectCount--;
 		}
 	}
 
@@ -304,13 +310,8 @@ public class GameArena
 	{
 		synchronized (this)
 		{
-            if (rectangles.containsKey(r))
-            {
-                javafx.scene.shape.Rectangle rectangle = rectangles.get(r);
-
-                rectangles.put(null, rectangle);
-                objectCount--;
-            }
+            removeList.add(r);
+            objectCount--;
 		}
 	}
 
