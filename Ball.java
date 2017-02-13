@@ -22,11 +22,6 @@ public class Ball
                                         // Pure red is 00FF00
                                         // Pure red is 0000FF
 
-	private double xSpeed;
-	private double ySpeed;
-
-    private double GRAVITY = 0.2;
-    private double FRICTION = 0.9;
 	/**
 	 * Obtains the current position of this Ball.
 	 * @return the X coordinate of this Ball within the GameArena.
@@ -82,57 +77,12 @@ public class Ball
 	}
 
 
-	/******************************************************/
-
 	public Ball(double x, double y, double diameter, String col)
 	{
 		xPosition = x;
 		yPosition = y;
-        xSpeed = 0;
-        ySpeed = 0;
 
 		size = diameter;
 		colour = col;
 	}	
-
-    public void setXSpeed(double speed)
-    {
-        xSpeed = speed;
-    }
-
-    public void setYSpeed(double speed)
-    {
-        ySpeed = speed;
-    }
-
-    public void move()
-    {
-		xPosition += xSpeed;
-		yPosition += ySpeed;
-    }
-
-	public void bounce(double maxX, double maxY)
-	{
-        move();
-		if (xPosition > maxX || xPosition < 0)
-        {
-			xSpeed = -xSpeed;
-		    xPosition += xSpeed;
-            xSpeed = xSpeed * FRICTION;
-        }
-
-		if (yPosition > maxY || yPosition < 0)
-        {
-			ySpeed = -ySpeed;
-		    yPosition += ySpeed;
-            ySpeed = ySpeed * FRICTION;
-        }
-	}
-
-	public void gravity(double maxX, double maxY)
-	{
-        ySpeed = ySpeed + GRAVITY;
-        bounce(maxX, maxY);
-
-    }
 }
